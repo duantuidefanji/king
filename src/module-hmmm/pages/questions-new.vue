@@ -2,10 +2,10 @@
   <div class="dashboard-container">
     <div class="app-container">
       <el-card>
-        <el-form>
+        <el-form :model="formData" :rules="rules" ref="ruleForm">
           <!-- 学科 -->
-          <el-form-item label="学科：">
-            <el-select v-model="formData.subjectNameId" placeholder="请选择">
+          <el-form-item label="学科：" prop="subjectID">
+            <el-select v-model="formData.subjectID" placeholder="请选择">
               <el-option
                 v-for="item in subjectName"
                 :key="item.value"
@@ -16,8 +16,8 @@
           </el-form-item>
 
           <!-- 目录 -->
-          <el-form-item label="目录：">
-            <el-select v-model="formData.simpleDirectoryId">
+          <el-form-item label="目录：" prop="catalogID">
+            <el-select v-model="formData.catalogID">
               <el-option
                 v-for="item in directionName"
                 :key="item.value"
@@ -28,8 +28,8 @@
           </el-form-item>
 
           <!-- 企业： -->
-          <el-form-item label="企业：">
-            <el-select v-model="formData.shortName">
+          <el-form-item label="企业：" prop="enterpriseID">
+            <el-select v-model="formData.enterpriseID">
               <el-option
                 v-for="item in shortName"
                 :key="item.id"
@@ -40,38 +40,24 @@
           </el-form-item>
 
           <!-- 城市 -->
-          <el-form-item label="城市：">
-            <el-select @change="changeProvinces" v-model="formData.provinces">
-              <el-option
-                v-for="(item,index) in provinces"
-                :key="index"
-                :value="item"
-                :label="item"
-              ></el-option>
+          <el-form-item label="城市：" prop="city">
+            <el-select @change="changeProvinces" v-model="formData.city">
+              <el-option v-for="(item,index) in provinces" :key="index" :value="item" :label="item"></el-option>
             </el-select>
-            <el-select v-model="formData.area">
-              <el-option
-              v-for="item in area"
-              :key="item"
-              :value="item"
-              :label="item"></el-option>
+            <el-select v-model="formData.area" prop="area">
+              <el-option v-for="item in area" :key="item" :value="item" :label="item"></el-option>
             </el-select>
           </el-form-item>
 
           <!-- 方向 -->
-          <el-form-item label="方向：">
+          <el-form-item label="方向：" prop="direction">
             <el-select v-model="formData.direction">
-              <el-option
-                v-for="(item,index) in direction"
-                :key="index"
-                :value="index"
-                :label="item"
-              ></el-option>
+              <el-option v-for="(item,index) in direction" :key="index" :value="item" :label="item"></el-option>
             </el-select>
           </el-form-item>
 
           <!-- 题型 -->
-          <el-form-item label="题型：">
+          <el-form-item label="题型：" prop="questionType">
             <el-radio-group @change="changeQuestionType" v-model="formData.questionType">
               <el-radio
                 v-for="item in questionType"
@@ -83,7 +69,7 @@
           </el-form-item>
 
           <!-- 难度 -->
-          <el-form-item label="难度：">
+          <el-form-item label="难度：" prop="difficulty">
             <el-radio-group v-model="formData.difficulty">
               <el-radio
                 v-for="item in difficulty"
@@ -95,79 +81,62 @@
           </el-form-item>
 
           <!-- 题干： -->
-          <el-form-item label="题干：">
-            <el-input></el-input>
+          <el-form-item label="题干：" prop="question">
+            <el-input v-model="formData.question"></el-input>
           </el-form-item>
 
           <!-- 选项 -->
-          <el-form-item v-if="chooseBoolean" label="选项（以下选中的选项为正确答案）">
+          <el-form-item prop="title" v-if="chooseBoolean" label="选项（以下选中的选项为正确答案）">
             <br />
-            <el-radio-group v-if="chooseRadio" v-model="formData.option">
-              <el-radio style="margin-top:15px" :value="option.isRight">
-                A：
-                <el-input v-model="formData.option.title"></el-input>
+
+            <el-radio-group v-if="chooseRadio">
+              <el-radio v-model="formData.options[0].isRight">
+                A: <el-input v-model="formData.options[0].title"></el-input>
               </el-radio>
-              <br />
-              <el-radio style="margin-top:15px" :value="option.isRight">
-                B：
-                <el-input v-model="formData.option.title"></el-input>
-              </el-radio>
-              <br />
-              <el-radio style="margin-top:15px" :value="option.isRight">
-                C：
-                <el-input v-model="formData.option.title"></el-input>
-              </el-radio>
-              <br />
-              <el-radio style="margin-top:15px" :value="option.isRight">
-                D：
-                <el-input v-model="formData.option.title"></el-input>
-              </el-radio>
-              <br />
             </el-radio-group>
 
-            <!-- 复选框 -->
-            <el-checkbox-group v-if="chooseCheckbox" v-model="formData.option">
-              <el-checkbox style="margin-top:15px" :value="option.isRight">
-                A：
-                <el-input v-model="formData.option.title"></el-input>
+            <div v-if="chooseCheckbox">
+              <el-checkbox style="margin-top:15px;" v-model="formData.options[0].isRight">
+                A.
+                <el-input v-model="formData.options[0].title"></el-input>
+              </el-checkbox><br>
+
+              <el-checkbox style="margin-top:15px;" v-model="formData.options[1].isRight">
+                B.
+                <el-input v-model="formData.options[1].title"></el-input>
+              </el-checkbox><br>
+
+              <el-checkbox style="margin-top:15px;" v-model="formData.options[2].isRight">
+                C.
+                <el-input v-model="formData.options[2].title"></el-input>
+              </el-checkbox><br>
+
+              <el-checkbox style="margin-top:15px;" v-model="formData.options[3].isRight">
+                D.
+                <el-input v-model="formData.options[3].title"></el-input>
               </el-checkbox>
-              <br />
-              <el-checkbox style="margin-top:15px" :value="option.isRight">
-                B：
-                <el-input v-model="formData.option.title"></el-input>
-              </el-checkbox>
-              <br />
-              <el-checkbox style="margin-top:15px" :value="option.isRight">
-                C：
-                <el-input v-model="formData.option.title"></el-input>
-              </el-checkbox>
-              <br />
-              <el-checkbox style="margin-top:15px" :value="option.isRight">
-                D：
-                <el-input v-model="formData.option.title"></el-input>
-              </el-checkbox>
-              <br />
-            </el-checkbox-group>
+            </div>
+            <br />
           </el-form-item>
 
           <!-- 答案解析 -->
-          <el-form-item label="答案解析">
-            <el-input></el-input>
+          <el-form-item label="答案解析" prop="answer">
+            <el-input v-model="formData.answer"></el-input>
           </el-form-item>
 
           <!-- 题目备注 -->
-          <el-form-item label="题目备注:">
-            <el-input></el-input>
+          <el-form-item label="题目备注:" prop="remarks">
+            <el-input v-model="formData.remarks"></el-input>
           </el-form-item>
 
           <!-- 试题标签 -->
-          <el-form-item label="试题标签：">
-            <el-input></el-input>
+          <el-form-item label="试题标签：" prop="tags">
+            <el-input v-model.number="formData.tags"></el-input>
           </el-form-item>
 
           <el-row type="flex" justify="center">
             <el-form-item>
-              <el-button type="primary">提交</el-button>
+              <el-button @click="submitData" type="primary">提交</el-button>
               <el-button>取消</el-button>
             </el-form-item>
           </el-row>
@@ -188,26 +157,53 @@ import { simple as simpleDirectory } from '@/api/hmmm/directorys'
 import { list } from '@/api/hmmm/companys'
 // 城市、地区
 import { provinces, citys } from '@/api/hmmm/citys'
+// 添加
+import { add } from '@/api/hmmm/questions'
 
 export default {
   name: 'QuestionsNew',
   data() {
     return {
       formData: {
-        subjectNameId: '', // 学科Id
-        simpleDirectoryId: '', // 目录Id
-        shortName: '', // 公司简称
-        provinces: '', // 省份
+        subjectID: '', // 学科Id , subjectID
+        catalogID: '', // 目录Id catalogID
+        enterpriseID: '', // 公司简称      enterpriseID
+        city: '', // 省份          city
         area: '', // 地区
-        direction: '', // 方向
-        questionType: '', // 题型
-        difficulty: '', // 难度
-        option: {
-          code: '', // 代码
-          title: '', // 标题
-          img: '', // 图片URL
-          isRight: false // 是否正确答案
-        }
+        direction: '', // 方向          direction
+        questionType: '', // 题型       questionType
+        difficulty: '', // 难度         difficulty
+        question: '', // 题干           question
+        options: [
+          {
+            code: 'A', // 代码             code
+            title: '', // 标题            title
+            img: '', // 图片URL            img
+            isRight: false // 是否正确答案 isRight
+          },
+          {
+            code: 'B', // 代码             code
+            title: '', // 标题            title
+            img: '', // 图片URL            img
+            isRight: false // 是否正确答案 isRight
+          },
+          {
+            code: 'C', // 代码             code
+            title: '', // 标题            title
+            img: '', // 图片URL            img
+            isRight: false // 是否正确答案 isRight
+          },
+          {
+            code: 'D', // 代码             code
+            title: '', // 标题            title
+            img: '', // 图片URL            img
+            isRight: false // 是否正确答案 isRight
+          }
+        ],
+        videoURL: 'www.hao123.com',
+        answer: '', // 答案解析         answer
+        remarks: '', // 题目备注        remarks
+        tags: '' // 试题标签           tags
       },
       checkList: [],
       subjectName: '', // 学科名称
@@ -218,19 +214,58 @@ export default {
       direction, // 方向
       questionType, // 题型
       difficulty, // 难度
-      option: {
-        code: '', // 代码
-        title: '', // 标题
-        img: '', // 图片URL
-        isRight: false // 是否正确答案
-      },
-      chooseRadio: false, // 选项中的单选
+      options: [
+          {
+            code: 'A', // 代码             code
+            title: '', // 标题            title
+            img: '', // 图片URL            img
+            isRight: false // 是否正确答案 isRight
+          },
+          {
+            code: 'B', // 代码             code
+            title: '', // 标题            title
+            img: '', // 图片URL            img
+            isRight: false // 是否正确答案 isRight
+          },
+          {
+            code: 'C', // 代码             code
+            title: '', // 标题            title
+            img: '', // 图片URL            img
+            isRight: false // 是否正确答案 isRight
+          },
+          {
+            code: 'D', // 代码             code
+            title: '', // 标题            title
+            img: '', // 图片URL            img
+            isRight: false // 是否正确答案 isRight
+          }
+      ],
+      chooseRadio: true, // 选项中的单选
       chooseCheckbox: false, // 选项中的复选框
-      chooseBoolean: true // 选项是否消失
+      chooseBoolean: true, // 选项是否消失
+      rules: {
+        subjectID: [
+          { required: true, message: '请选择学科名称' }
+        ],
+        catalogID: [
+          { required: true, message: '请选择目录名称' }
+        ],
+        enterpriseId: [
+          { required: true, message: '请选择企业' }
+        ],
+        city: [
+          { required: true, message: '请选择城市' }
+        ],
+        area: [
+          { required: true, message: '请选择地区' }
+        ],
+        direction: [
+          { required: true, message: '请选择要就业的方向' }
+        ]
+      }
     }
   },
   methods: {
-
     // 题型单选改变事件
     changeQuestionType(params) {
       console.log(params)
@@ -249,6 +284,32 @@ export default {
         this.chooseRadio = false
         this.chooseCheckbox = false
         this.chooseBoolean = false
+        this.formData.options = [
+          {
+            code: 'A', // 代码             code
+            title: '', // 标题            title
+            img: '', // 图片URL            img
+            isRight: false // 是否正确答案 isRight
+          },
+          {
+            code: 'B', // 代码             code
+            title: '', // 标题            title
+            img: '', // 图片URL            img
+            isRight: false // 是否正确答案 isRight
+          },
+          {
+            code: 'C', // 代码             code
+            title: '', // 标题            title
+            img: '', // 图片URL            img
+            isRight: false // 是否正确答案 isRight
+          },
+          {
+            code: 'D', // 代码             code
+            title: '', // 标题            title
+            img: '', // 图片URL            img
+            isRight: false // 是否正确答案 isRight
+          }
+      ]
       }
     },
 
@@ -257,6 +318,23 @@ export default {
       console.log(params)
       this.area = citys(params)
       console.log(this.area)
+    },
+
+    // 点击提交按钮
+    submitData() {
+      // add(this.formData)
+      this.$refs.ruleForm.validate((valid) => {
+        if (valid) {
+          alert('ok')
+        } else {
+          alert('error')
+        }
+      })
+    },
+
+    // 改变选项事件
+    changeChoose() {
+      console.log(123)
     },
 
     // 得到数据的事件
