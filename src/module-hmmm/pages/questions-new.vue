@@ -41,13 +41,20 @@
 
           <!-- 城市 -->
           <el-form-item label="城市：">
-            <el-select v-model="formData.provinces">
+            <el-select @change="changeProvinces" v-model="formData.provinces">
               <el-option
                 v-for="(item,index) in provinces"
                 :key="index"
-                :value="index"
+                :value="item"
                 :label="item"
               ></el-option>
+            </el-select>
+            <el-select v-model="formData.area">
+              <el-option
+              v-for="item in area"
+              :key="item"
+              :value="item"
+              :label="item"></el-option>
             </el-select>
           </el-form-item>
 
@@ -180,7 +187,7 @@ import { simple as simpleDirectory } from '@/api/hmmm/directorys'
 // 企业管理列表
 import { list } from '@/api/hmmm/companys'
 // 城市、地区
-import { provinces } from '@/api/hmmm/citys'
+import { provinces, citys } from '@/api/hmmm/citys'
 
 export default {
   name: 'QuestionsNew',
@@ -191,6 +198,7 @@ export default {
         simpleDirectoryId: '', // 目录Id
         shortName: '', // 公司简称
         provinces: '', // 省份
+        area: '', // 地区
         direction: '', // 方向
         questionType: '', // 题型
         difficulty: '', // 难度
@@ -206,6 +214,7 @@ export default {
       directionName: '', // 目录名称
       shortName: [], // 企业简称
       provinces: [], // 省份
+      area: '', // 地区
       direction, // 方向
       questionType, // 题型
       difficulty, // 难度
@@ -221,6 +230,8 @@ export default {
     }
   },
   methods: {
+
+    // 题型单选改变事件
     changeQuestionType(params) {
       console.log(params)
       if (params === '单选') {
@@ -241,6 +252,14 @@ export default {
       }
     },
 
+    // 改变城市下拉选择框的事件
+    changeProvinces(params) {
+      console.log(params)
+      this.area = citys(params)
+      console.log(this.area)
+    },
+
+    // 得到数据的事件
     getData() {
       // 学科简单列表
       simple().then(result => {
@@ -263,7 +282,7 @@ export default {
       console.log(this.provinces)
     }
   },
-  async created() {
+  created() {
     this.getData()
     this.chooseRadio = true
   }
