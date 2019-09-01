@@ -49,6 +49,12 @@ export default [
         meta: { title: '试题录入', noCache: true }
       },
       {
+        path: 'new/:id',
+        component: _import('hmmm/pages/questions-new'),
+        name: 'subjects-new:id',
+        meta: { title: '学科ID', noCache: true }
+      },
+      {
         path: 'randoms',
         component: _import('hmmm/pages/questions-randoms'),
         name: 'questions-randoms',
@@ -72,6 +78,7 @@ export default [
         name: 'subjects-list',
         meta: { title: '学科', noCache: true }
       },
+      
       {
         path: 'directorys',
         component: _import('hmmm/pages/directorys'),

@@ -89,9 +89,24 @@
           <el-form-item prop="title" v-if="chooseBoolean" label="选项（以下选中的选项为正确答案）">
             <br />
 
-            <el-radio-group v-if="chooseRadio">
-              <el-radio v-model="formData.options[0].isRight">
-                A: <el-input v-model="formData.options[0].title"></el-input>
+            <el-radio-group v-if="chooseRadio" v-model="formData.options">
+              <el-radio style="margin-top:15px;">
+                A:
+                <el-input v-model="formData.options[0].title"></el-input>
+              </el-radio>
+              <br />
+              <el-radio style="margin-top:15px;">
+                B:
+                <el-input v-model="formData.options[1].title"></el-input>
+              </el-radio>
+              <el-radio style="margin-top:15px;">
+                C:
+                <el-input v-model="formData.options[2].title"></el-input>
+              </el-radio>
+              <br />
+              <el-radio style="margin-top:15px;">
+                D:
+                <el-input v-model="formData.options[3].title"></el-input>
               </el-radio>
             </el-radio-group>
 
@@ -99,17 +114,20 @@
               <el-checkbox style="margin-top:15px;" v-model="formData.options[0].isRight">
                 A.
                 <el-input v-model="formData.options[0].title"></el-input>
-              </el-checkbox><br>
+              </el-checkbox>
+              <br />
 
               <el-checkbox style="margin-top:15px;" v-model="formData.options[1].isRight">
                 B.
                 <el-input v-model="formData.options[1].title"></el-input>
-              </el-checkbox><br>
+              </el-checkbox>
+              <br />
 
               <el-checkbox style="margin-top:15px;" v-model="formData.options[2].isRight">
                 C.
                 <el-input v-model="formData.options[2].title"></el-input>
-              </el-checkbox><br>
+              </el-checkbox>
+              <br />
 
               <el-checkbox style="margin-top:15px;" v-model="formData.options[3].isRight">
                 D.
@@ -157,8 +175,9 @@ import { simple as simpleDirectory } from '@/api/hmmm/directorys'
 import { list } from '@/api/hmmm/companys'
 // 城市、地区
 import { provinces, citys } from '@/api/hmmm/citys'
-// 添加
-import { add } from '@/api/hmmm/questions'
+// 添加：add, 基础题库详情：deteail
+import { add, detail } from '@/api/hmmm/questions'
+import { truncate } from 'fs'
 
 export default {
   name: 'QuestionsNew',
@@ -215,53 +234,49 @@ export default {
       questionType, // 题型
       difficulty, // 难度
       options: [
-          {
-            code: 'A', // 代码             code
-            title: '', // 标题            title
-            img: '', // 图片URL            img
-            isRight: false // 是否正确答案 isRight
-          },
-          {
-            code: 'B', // 代码             code
-            title: '', // 标题            title
-            img: '', // 图片URL            img
-            isRight: false // 是否正确答案 isRight
-          },
-          {
-            code: 'C', // 代码             code
-            title: '', // 标题            title
-            img: '', // 图片URL            img
-            isRight: false // 是否正确答案 isRight
-          },
-          {
-            code: 'D', // 代码             code
-            title: '', // 标题            title
-            img: '', // 图片URL            img
-            isRight: false // 是否正确答案 isRight
-          }
+        {
+          code: 'A', // 代码             code
+          title: '', // 标题            title
+          img: '', // 图片URL            img
+          isRight: false // 是否正确答案 isRight
+        },
+        {
+          code: 'B', // 代码             code
+          title: '', // 标题            title
+          img: '', // 图片URL            img
+          isRight: false // 是否正确答案 isRight
+        },
+        {
+          code: 'C', // 代码             code
+          title: '', // 标题            title
+          img: '', // 图片URL            img
+          isRight: false // 是否正确答案 isRight
+        },
+        {
+          code: 'D', // 代码             code
+          title: '', // 标题            title
+          img: '', // 图片URL            img
+          isRight: false // 是否正确答案 isRight
+        }
       ],
-      chooseRadio: true, // 选项中的单选
-      chooseCheckbox: false, // 选项中的复选框
+      chooseRadio: false, // 选项中的单选
+      chooseCheckbox: true, // 默认是选项中的复选框
       chooseBoolean: true, // 选项是否消失
       rules: {
-        subjectID: [
-          { required: true, message: '请选择学科名称' }
+        subjectID: [{ required: true, message: '请选择学科名称' }],
+        catalogID: [{ required: true, message: '请选择目录名称' }],
+        enterpriseID: [{ required: true, message: '请选择企业' }],
+        city: [{ required: true, message: '请选择城市' }],
+        area: [{ required: true, message: '请选择地区' }],
+        direction: [{ required: true, message: '请选择要就业的方向' }],
+        questionType: [
+          { required: true, message: '请选择问题的类型（单选、多选、简答）' }
         ],
-        catalogID: [
-          { required: true, message: '请选择目录名称' }
-        ],
-        enterpriseId: [
-          { required: true, message: '请选择企业' }
-        ],
-        city: [
-          { required: true, message: '请选择城市' }
-        ],
-        area: [
-          { required: true, message: '请选择地区' }
-        ],
-        direction: [
-          { required: true, message: '请选择要就业的方向' }
-        ]
+        difficulty: [{ required: true, message: '请选择问题的难易程度' }],
+        question: [{ required: true, message: '请输入问题的题目' }],
+        answer: [{ required: true, message: '请输入问题的答案' }],
+        remarks: [{ required: true, message: '请输入题目备注' }],
+        tags: [{ required: true, message: '请输入试题标签' }]
       }
     }
   },
@@ -309,7 +324,7 @@ export default {
             img: '', // 图片URL            img
             isRight: false // 是否正确答案 isRight
           }
-      ]
+        ]
       }
     },
 
@@ -323,7 +338,7 @@ export default {
     // 点击提交按钮
     submitData() {
       // add(this.formData)
-      this.$refs.ruleForm.validate((valid) => {
+      this.$refs.ruleForm.validate(valid => {
         if (valid) {
           alert('ok')
         } else {
@@ -357,12 +372,21 @@ export default {
 
       // 省份
       this.provinces = provinces()
-      console.log(this.provinces)
+      // console.log(this.provinces)
     }
   },
   created() {
     this.getData()
-    this.chooseRadio = true
+    this.chooseRadio = false
+    let id = Number(this.$route.params.id)
+    console.log('111 ' + id)
+    if (id) {
+      detail(id).then(result => {
+        console.log(result)
+      })
+    } else {
+      console.log('添加')
+    }
   }
 }
 </script>
