@@ -130,11 +130,13 @@
                 <el-table-column prop="chkUser" label="审核人"></el-table-column>
                 <el-table-column prop="publishState" label="发布状态" :formatter="formatterPub"></el-table-column>
                 <el-table-column prop="operate" label="操作">
+                     <template slot-scope="stData">
                   <el-link type="primary" :underline="false">审核</el-link>
                   <el-link type="primary" :underline="false">预览</el-link>
                   <el-link type="primary" :underline="false">下架</el-link>
                   <el-link type="primary" :underline="false" @click='edit(stData.row.id)'>修改</el-link>
                   <el-link type="primary" :underline="false"  @click="del(stData.row)">删除</el-link>
+                     </template>
                 </el-table-column>
               </el-table>
             </el-tab-pane>
@@ -155,11 +157,13 @@
                 <el-table-column prop="chkUser" label="审核人"></el-table-column>
                 <el-table-column prop="publishState" label="发布状态" :formatter="formatterPub"></el-table-column>
                 <el-table-column prop="operate" label="操作">
+                     <template slot-scope="stData">
                   <el-link type="primary" :underline="false">审核</el-link>
                   <el-link type="primary" :underline="false">预览</el-link>
                   <el-link type="primary" :underline="false">下架</el-link>
                   <el-link type="primary" :underline="false" @click='edit(stData.row.id)'>修改</el-link>
                   <el-link type="primary" :underline="false"  @click="del(stData.row)">删除</el-link>
+                     </template>
                 </el-table-column>
               </el-table>
             </el-tab-pane>

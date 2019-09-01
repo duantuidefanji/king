@@ -42,6 +42,13 @@ export default [{
         path: 'new/:id',
         component: _import('hmmm/pages/questions-new'),
         name: 'questions-new',
+        meta: { title: '试题录入', noCache: true },
+        hidden: true
+      },
+      {
+        path: 'new',
+        component: _import('hmmm/pages/questions-new'),
+        name: 'questions-new',
         meta: { title: '试题录入', noCache: true }
       },
       {
