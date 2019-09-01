@@ -1,7 +1,5 @@
 <template>
-  <div class="dashboard-container">
-    <div class="app-container">基础题库管理</div>
-  </div>
+  <div>基础题库</div>
 </template>
 
 <script>
